@@ -7,13 +7,15 @@ from kivy.uix.textinput import TextInput
 from plyer import notification
 import re
 
+
 class MedicationReminderApp(App):
     def build(self):
         self.root = BoxLayout(orientation='vertical')
         self.root.add_widget(Label(text='Phainder', font_size=24))
 
         # Button to set medication reminder
-        set_medication_button = Button(text='Set Medication Reminder', font_size=20)
+        set_medication_button = Button(
+            text='Set Medication Reminder', font_size=20)
         set_medication_button.bind(on_press=self.set_medication_reminder)
         self.root.add_widget(set_medication_button)
 
@@ -21,6 +23,11 @@ class MedicationReminderApp(App):
         set_refill_button = Button(text='Set Refill Reminder', font_size=20)
         set_refill_button.bind(on_press=self.set_refill_reminder)
         self.root.add_widget(set_refill_button)
+
+        # Button to exit the app
+        exit_button = Button(text='Exit', font_size=20)
+        exit_button.bind(on_press=exit)
+        self.root.add_widget(exit_button)
 
         return self.root
 
@@ -33,7 +40,8 @@ class MedicationReminderApp(App):
         popup.open()
 
     def add_medication_schedule(self, medicine_name):
-        popup = SchedulePopup(self.add_schedule, reminder_type='Medication', medicine_name=medicine_name)
+        popup = SchedulePopup(
+            self.add_schedule, reminder_type='Medication', medicine_name=medicine_name)
         popup.open()
 
     def add_refill_schedule(self, medicine_name, date):
@@ -56,6 +64,7 @@ class MedicationReminderApp(App):
             timeout=10  # Reminder notification timeout in seconds
         )
 
+
 class MedicineNamePopup(Popup):
     def __init__(self, callback, is_date=False, **kwargs):
         super(MedicineNamePopup, self).__init__(**kwargs)
@@ -65,12 +74,14 @@ class MedicineNamePopup(Popup):
         layout = BoxLayout(orientation='vertical')
         self.content = layout
 
-        self.med_name_input = TextInput(hint_text='Enter medicine name', multiline=False)
+        self.med_name_input = TextInput(
+            hint_text='Enter medicine name', multiline=False)
         layout.add_widget(Label(text='Enter Medicine Name', font_size=18))
         layout.add_widget(self.med_name_input)
 
         if is_date:
-            self.date_input = TextInput(hint_text='Enter date (dd/mm/yyyy)', multiline=False)
+            self.date_input = TextInput(
+                hint_text='Enter date (dd/mm/yyyy)', multiline=False)
             layout.add_widget(Label(text='Enter Refill Date', font_size=18))
             layout.add_widget(self.date_input)
         else:
@@ -89,6 +100,7 @@ class MedicineNamePopup(Popup):
             self.callback(medicine_name)
         self.dismiss()
 
+
 class SchedulePopup(Popup):
     def __init__(self, callback, reminder_type, medicine_name, **kwargs):
         super(SchedulePopup, self).__init__(**kwargs)
@@ -99,8 +111,10 @@ class SchedulePopup(Popup):
         layout = BoxLayout(orientation='vertical')
         self.content = layout
 
-        self.schedule_input = TextInput(hint_text='Enter schedule (e.g., 8:00 AM, 12:00 PM)', multiline=False)
-        layout.add_widget(Label(text=f'Enter {reminder_type} Schedule', font_size=18))
+        self.schedule_input = TextInput(
+            hint_text='Enter schedule (e.g., 8:00 AM, 12:00 PM)', multiline=False)
+        layout.add_widget(
+            Label(text=f'Enter {reminder_type} Schedule', font_size=18))
         layout.add_widget(self.schedule_input)
 
         add_button = Button(text='Add Schedule', font_size=16)
@@ -119,6 +133,7 @@ class SchedulePopup(Popup):
             invalid_input_popup = InvalidInputPopup()
             invalid_input_popup.open()
 
+
 class InvalidInputPopup(Popup):
     def __init__(self, **kwargs):
         super(InvalidInputPopup, self).__init__(**kwargs)
@@ -127,8 +142,10 @@ class InvalidInputPopup(Popup):
         self.content = layout
 
         ok_button = Button(text='OK', on_press=self.dismiss)
-        layout.add_widget(Label(text='Invalid schedule format. Please enter in the format "8:00 AM, 12:00 PM"', font_size=16))
+        layout.add_widget(Label(
+            text='Invalid schedule format. Please enter in the format "8:00 AM, 12:00 PM"', font_size=16))
         layout.add_widget(ok_button)
+
 
 if __name__ == '__main__':
     MedicationReminderApp().run()
