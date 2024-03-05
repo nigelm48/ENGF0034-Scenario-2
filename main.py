@@ -9,6 +9,10 @@ import re
 
 
 class MedicationReminderApp(App):
+    def __init__(self, **kwargs):
+        super(MedicationReminderApp, self).__init__(**kwargs)
+        self.reminders = []
+
     def build(self):
         self.root = BoxLayout(orientation='vertical')
         self.root.add_widget(Label(text='Phainder', font_size=24))
@@ -23,6 +27,11 @@ class MedicationReminderApp(App):
         set_refill_button = Button(text='Set Refill Reminder', font_size=20)
         set_refill_button.bind(on_press=self.set_refill_reminder)
         self.root.add_widget(set_refill_button)
+
+        # Button to see all reminders
+        view_reminders_button = Button(text='View Reminders', font_size=20)
+        view_reminders_button.bind(on_press=self.view_reminders)
+        self.root.add_widget(view_reminders_button)
 
         # Button to exit the app
         exit_button = Button(text='Exit', font_size=20)
@@ -53,6 +62,7 @@ class MedicationReminderApp(App):
             message=notification_message,
             timeout=10  # Reminder notification timeout in seconds
         )
+        self.reminders.append((medicine_name, date))
 
     def add_schedule(self, medicine_name, schedule, reminder_type):
         # Schedule notification using Plyer for medication reminder
@@ -63,11 +73,21 @@ class MedicationReminderApp(App):
             message=notification_message,
             timeout=10  # Reminder notification timeout in seconds
         )
+        self.reminders.append((medicine_name, schedule, reminder_type))
+
+    def get_all_reminders(self):
+        # Get all scheduled reminders
+        return self.reminders
+
+    def view_reminders(self, instance):
+        reminder = self.get_all_reminders()
+        RemindersPopup(reminder).open()
 
 
 class MedicineNamePopup(Popup):
     def __init__(self, callback, is_date=False, **kwargs):
         super(MedicineNamePopup, self).__init__(**kwargs)
+        self.title = 'Enter Medicine Name'
         self.callback = callback
         self.is_date = is_date
 
@@ -104,6 +124,7 @@ class MedicineNamePopup(Popup):
 class SchedulePopup(Popup):
     def __init__(self, callback, reminder_type, medicine_name, **kwargs):
         super(SchedulePopup, self).__init__(**kwargs)
+        self.title = 'Set Schedule'
         self.callback = callback
         self.reminder_type = reminder_type
         self.medicine_name = medicine_name
@@ -134,9 +155,25 @@ class SchedulePopup(Popup):
             invalid_input_popup.open()
 
 
+class RemindersPopup(Popup):
+    def __init__(self, reminders, **kwargs):
+        super(RemindersPopup, self).__init__(**kwargs)
+        self.title = 'Reminders'
+
+        layout = BoxLayout(orientation='vertical')
+        self.content = layout
+
+        close_button = Button(text='Close', on_press=self.dismiss)
+        layout.add_widget(Label(text='Reminders', font_size=30))
+        for reminder in reminders:
+            layout.add_widget(Label(text=str(reminder), font_size=20))
+        layout.add_widget(close_button)
+
+
 class InvalidInputPopup(Popup):
     def __init__(self, **kwargs):
         super(InvalidInputPopup, self).__init__(**kwargs)
+        self.title = 'Invalid Input'
 
         layout = BoxLayout(orientation='vertical')
         self.content = layout
