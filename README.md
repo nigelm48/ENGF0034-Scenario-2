@@ -7,3 +7,7 @@ Prerequisites:
 How to Run:
 Simply run the main.py file
 
+By:
+Nigel Tom Mathews
+Stephen Yiu
+
